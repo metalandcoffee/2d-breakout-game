@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>2D Breakout Game</title>
+		<meta name="description" content="The Metalhead Dev. Coding, Metal and Coffee. 💀">
+		<meta name="author" content="Metal & Coffee">
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;600&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<canvas id="myCanvas" width="480" height="320"></canvas>
+		<script>
+			// Grab canvas object.
+			var canvas = document.getElementById('myCanvas');
+
+			// Define paint brush tool to start drawing on canvas.
+			var ctx = canvas.getContext('2d');
+
+			var x           = canvas.width / 2;
+			var y           = canvas.height - 30;
+			var dx          = 2;
+			var dy          = -2;
+			var ballRadius  = 10;
+			var randomColor = Math.floor(Math.random()*16777215).toString(16);
+
+			// Paddle definitions.
+			var paddleHeight = 10;
+			var paddleWidth  = 75;
+			var paddleX      = (canvas.width-paddleWidth) / 2;
+			var rightPressed = false;
+			var leftPressed  = false;
+
+			function draw() {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				drawBall();
+				drawPaddle();
+				// If next x position is outside of left or right canvas border, bounce in reverse direction.
+				if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+					dx = -dx;
+					getRandomColor();
+				}
+
+				// If next y position is outside of top or bottom canvas border, bounce in reverse direction.
+				if(y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+					dy = -dy;
+					getRandomColor();
+				}
+
+				x += dx;
+				y += dy;
+			}
+
+			function drawBall() {
+				ctx.beginPath();
+				ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+				ctx.fillStyle = `#${randomColor}`;
+				ctx.fill();
+				ctx.closePath();
+
+				if(rightPressed) {
+					paddleX += 7;
+					if (paddleX + paddleWidth > canvas.width){
+						paddleX = canvas.width - paddleWidth;
+					}
+
+				} else if(leftPressed) {
+					paddleX -= 7;
+					if (paddleX < 0){
+						paddleX = 0;
+					}
+				}
+			}
+
+			function drawPaddle() {
+				ctx.beginPath();
+				ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+				ctx.fillStyle = "#0095DD";
+				ctx.fill();
+				ctx.closePath();
+			}
+
+			function getRandomColor() {
+				randomColor = Math.floor(Math.random()*16777215).toString(16);
+			}
+			
+
+		
+			function keyDownHandler(e) {
+				if(e.key == 'Right' || e.key == 'ArrowRight') {
+					rightPressed = true;
+				}
+				else if(e.key == 'Left' || e.key == 'ArrowLeft') {
+					leftPressed = true;
+				}
+			}
+
+			function keyUpHandler(e) {
+				if(e.key == 'Right' || e.key == 'ArrowRight') {
+					rightPressed = false;
+				}
+				else if(e.key == 'Left' || e.key == 'ArrowLeft') {
+				leftPressed = false;
+				}
+			}
+
+			document.addEventListener('keydown', keyDownHandler, false);
+			document.addEventListener('keyup', keyUpHandler, false);
+			setInterval(draw, 10);
+		</script>
+	</body>
+</html>
