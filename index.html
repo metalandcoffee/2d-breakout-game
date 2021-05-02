@@ -38,15 +38,36 @@
 				drawBall();
 				drawPaddle();
 				// If next x position is outside of left or right canvas border, bounce in reverse direction.
-				if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+				if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
 					dx = -dx;
 					getRandomColor();
 				}
 
-				// If next y position is outside of top or bottom canvas border, bounce in reverse direction.
-				if(y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+				/* If next y position is outside of top or bottom canvas border, bounce in reverse direction. */
+
+				// If hitting top of screen/canvas, bounce in reverse direction.
+				if (y + dy < ballRadius) {
 					dy = -dy;
 					getRandomColor();
+
+				// If hitting bottom of screen/canvas...
+				} else if (y + dy > canvas.height - ballRadius) {
+
+					// If hitting the paddle, go on and bounce in reverse direction.
+					if( x > paddleX && x < paddleX + paddleWidth ) {
+						dx += Math.sign(dx);
+						dy += Math.sign(dy);
+						dy = -dy;
+
+				
+
+
+					// If not hitting paddle, GAME OVER;
+					} else {
+						alert("GAME OVER");
+						document.location.reload();
+						clearInterval(interval);
+					}
 				}
 
 				x += dx;
@@ -108,7 +129,7 @@
 
 			document.addEventListener('keydown', keyDownHandler, false);
 			document.addEventListener('keyup', keyUpHandler, false);
-			setInterval(draw, 10);
+			var interval = setInterval(draw, 10);
 		</script>
 	</body>
 </html>
